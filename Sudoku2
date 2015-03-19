@@ -8,13 +8,14 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Sudoku2 solver    v2.01
- * date 2/07/2015
+ * Sudoku2 solver    v2.02
+ * date 3/19/2015
  * @author Josh Kertscher
  */
+
 public class Sudoku2 
 {
-    // Copy a Matrix
+    // Copy a 2d Matrix
     static int[][] copyMatrix(int[][] A)
     {
         int[][] Copy;                       //copy matrix in case guess is wrong and we will be able to recover progress and try another guess              
@@ -24,6 +25,24 @@ public class Sudoku2
             for(int k = 0 ; k < 9 ; k++)
             {
                 Copy[i][k]=A[i][k];
+            }
+        }
+        return Copy;
+    }
+    
+    // Copy a 3d Matrix
+    static int[][][] copy3DMatrix(int[][][] A)
+    {
+        int[][][] Copy;                       //copy matrix in case guess is wrong and we will be able to recover progress and try another guess              
+        Copy = new int[9][9][10];
+        for(int i = 0 ; i < 9 ; i++)                         
+        {
+            for(int j = 0 ; j < 9 ; j++)
+            {
+                for(int k = 0; k < 10; k++)
+                {
+                    Copy[i][j][k]=A[i][j][k];
+                }
             }
         }
         return Copy;
@@ -82,12 +101,12 @@ public class Sudoku2
             {
                 if(counter[j]>1) 
                 {
-                    System.out.println("Row: " + (i+1) + " is bad");   //print line
+//                    System.out.println("Row: " + (i+1) + " is bad");   //print line
                     return false;
                 }   
             }
 
-            System.out.println("Row: " + (i+1) + " is good");   //print line
+//            System.out.println("Row: " + (i+1) + " is good");   //print line
         }
         System.out.println("All Rows are good");   
 
@@ -105,12 +124,12 @@ public class Sudoku2
             {
                 if(counter[j]>1) 
                 {
-                    System.out.println("Columns: " + (i+1) + " is bad");   //print line
+//                    System.out.println("Columns: " + (i+1) + " is bad");   //print line
                     return false;
                 }   
             }
 
-            System.out.println("Columns: " + (i+1) + " is good");   //print line
+//            System.out.println("Columns: " + (i+1) + " is good");   //print line
         }
         System.out.println("All Columns are good");   
 
@@ -132,12 +151,12 @@ public class Sudoku2
                 {
                     if(counter[j]>1) 
                     {
-                    System.out.println("Square: " + (x/3+1) + "" + (y/3+1) + " is bad");   //print line
+//                    System.out.println("Square: " + (x/3+1) + "" + (y/3+1) + " is bad");   //print line
                     return false;
                     }   
                 }
 
-                    System.out.println("Square: " + (x/3+1) + "" + (y/3+1) + " is good");   //print line
+//                    System.out.println("Square: " + (x/3+1) + "" + (y/3+1) + " is good");   //print line
                 }
 
             }
@@ -146,6 +165,86 @@ public class Sudoku2
         System.out.println("All Squares are good");
         return true;
     }
+    static boolean matrixCheck(int[][] A)       //check if solution is valid 
+	{
+		int sumr = 0;                       //initilize variables 
+		int sumd = 0;
+
+		int sum11 = 0;
+		int sum12 = 0;
+		int sum13 = 0;
+
+		int sum21 = 0;
+		int sum22 = 0;
+		int sum23 = 0;
+
+		int sum31 = 0;
+		int sum32 = 0;
+		int sum33 = 0;
+
+		for(int i = 0 ; i < 9 ; i++)        //return false if vertical rows or horizontal rows do not add up to 45                 
+		{
+			for(int k = 0 ; k < 9 ; k++)
+			{
+				sumr += A[i][k];
+			}
+
+			for(int k = 0 ; k < 9 ; k++)
+			{
+				sumd += A[k][i];
+			}
+
+			if(sumr != 45)
+				return false; 
+
+			if(sumd != 45)
+				return false;
+
+			sumr = 0;
+			sumd = 0;
+		}     
+              
+        for(int i = 0 ; i < 3 ; i++)        // 11|12|13    adds each of the 9 blocks              
+            for(int j = 0 ; j < 3 ; j++)    // 21|22|23
+                sum11 += A[i][j];           // 31|32|33
+
+        for(int i = 0 ; i < 3 ; i++)                    
+            for(int j = 3 ; j < 6 ; j++)
+                sum12 += A[i][j];
+
+        for(int i = 0 ; i < 3 ; i++)                    
+            for(int j = 6 ; j < 9 ; j++)
+                sum13 += A[i][j];
+
+        for(int i = 3 ; i < 6 ; i++)                    
+            for(int j = 6 ; j < 9 ; j++)
+                sum21 += A[i][j];
+
+        for(int i = 3 ; i < 6 ; i++)                    
+            for(int j = 3 ; j < 6 ; j++)
+                sum22 += A[i][j];
+
+        for(int i = 3 ; i < 6 ; i++)                    
+            for(int j = 0 ; j < 3 ; j++)
+                sum23 += A[i][j];
+
+        for(int i = 6 ; i < 9 ; i++)                    
+            for(int j = 0 ; j < 3 ; j++)
+                sum31 += A[i][j];
+
+        for(int i = 6 ; i < 9 ; i++)                    
+            for(int j = 3 ; j < 6 ; j++)
+                sum32 += A[i][j];
+
+        for(int i = 6 ; i < 9 ; i++)                    
+            for(int j = 6 ; j < 9 ; j++)
+                sum33 += A[i][j];
+
+        if(sum11 != 45 && sum12 != 45 && sum13 != 45 && sum21 != 45 && sum22 != 45 && sum23 != 45 && sum31 != 45 && sum32 != 45 && sum33 != 45)
+            return false;   //return false if one of the 9 blocks do not add up to 45
+
+		return true;
+	}
 
     // Initialize the Marker
     public static int[][][] Init_Mark()
@@ -301,10 +400,10 @@ public class Sudoku2
     public static int[][] SudokuSolver(int[][] puzzle, int[][][] marks)
     {
         int sum = 0;
-        System.out.println();
-        matrixPrint(puzzle);         //print solved sudoku puzzle
+//        System.out.println();
+//        matrixPrint(puzzle);         //print solved sudoku puzzle
         // solves when cell only has one marker
-        System.out.println("Check cells for one marker");
+//        System.out.println("Check cells for one marker");
         for(int Y = 0; Y < 9; Y++ )
         {
             for(int X = 0; X < 9; X++)
@@ -320,15 +419,15 @@ public class Sudoku2
                 if(sum==1)//if sum equals 1 than that means only one number was available and that number goes into the cell
                 {
                     puzzle[Y][X] = cell;
-                    System.out.println("X: " + X + " Y: " + Y + " Cell: " + cell);
+//                    System.out.println("X: " + X + " Y: " + Y + " Cell: " + cell);
                 }
             }
         }
         
-        System.out.println();
-        matrixPrint(puzzle);         //print solved sudoku puzzle
+//        System.out.println();
+//        matrixPrint(puzzle);         //print solved sudoku puzzle
         // solves when there is only one marker available for a cell in a row 
-        System.out.println("Check rows for one marker");                  
+//        System.out.println("Check rows for one marker");                  
         for(int Y = 0; Y < 9; Y++ )//rows
         {
             int[][] count = new int[2][10]; //count number of times each number has occured in 0 and store column in 1
@@ -340,22 +439,22 @@ public class Sudoku2
                     if(marks[Y][X][Z]==1) {count[1][Z] = X; }
                 } 
             }
-            arrayPrint(count[0]);
-            arrayPrint(count[1]);
+//            arrayPrint(count[0]);
+//            arrayPrint(count[1]);
                 
             for(int num = 1; num < 10; num++) // go through each number
             {
                 if(count[0][num]==1)//if count equals 1 than that means only one number was available and that number goes into the cell
                 {
                     puzzle[Y][count[1][num]] = num; //put number into cell 
-                    System.out.println("X: " + count[1][num] + " Y: " + Y + " Cell: " + num);
+//                    System.out.println("X: " + count[1][num] + " Y: " + Y + " Cell: " + num);
                 }
             }
         }
-        System.out.println();
-        matrixPrint(puzzle);         //print solved sudoku puzzle
+//        System.out.println();
+//        matrixPrint(puzzle);         //print solved sudoku puzzle
         // solves when there is only one marker available for a cell in a column
-        System.out.println("Check columns for one marker");
+//        System.out.println("Check columns for one marker");
         for(int Y = 0; Y < 9; Y++ )//rows
         {
             int[][] count = new int[2][10]; //count number of times each number has occured
@@ -367,23 +466,23 @@ public class Sudoku2
                     if(marks[X][Y][Z]==1) {count[1][Z] = X; }
                 } 
             }
-            arrayPrint(count[0]);
-            arrayPrint(count[1]);
+//            arrayPrint(count[0]);
+//            arrayPrint(count[1]);
                 
             for(int num = 1; num < 10; num++) // go through each number
             {
                 if(count[0][num]==1)//if count equals 1 than that means only one number was available and that number goes into the cell
                 {
                     puzzle[count[1][num]][Y] = num; //put number into cell 
-                    System.out.println("X: " + Y + " Y: " + count[1][num] + " Cell: " + num);
+//                    System.out.println("X: " + Y + " Y: " + count[1][num] + " Cell: " + num);
                 }
             }
         }
-        System.out.println();
-        matrixPrint(puzzle);         //print solved sudoku puzzle
+//        System.out.println();
+//        matrixPrint(puzzle);         //print solved sudoku puzzle
         // solves when there is only one marker available for a cell in a square
-        System.out.println("Check squares for one marker");                     //check squares not sure
-        System.out.println("Checking square: 11");
+//        System.out.println("Check squares for one marker");                     //check squares not sure
+//        System.out.println("Checking square: 11");
         int[][] count = new int[3][10]; //count number of times each number has occured and store location
         for(int Y = 0; Y < 3; Y++ )
         {
@@ -400,18 +499,18 @@ public class Sudoku2
                 }
             }
         }
-        arrayPrint(count[0]);
+//        arrayPrint(count[0]);
                 
         for(int num = 1; num < 10; num++) // go through each number
         {
             if(count[0][num]==1)//if count equals 1 than that means only one number was available and that number goes into the cell
             {
                 puzzle[count[2][num]][count[1][num]] = num; //put number into cell 
-                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
+//                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
             }
         }
         
-        System.out.println("Checking square: 12");
+//        System.out.println("Checking square: 12");
         count = new int[3][10]; //count number of times each number has occured and store location
         for(int Y = 3; Y < 6; Y++ )
         {
@@ -428,18 +527,18 @@ public class Sudoku2
                 }
             }
         }
-        arrayPrint(count[0]);
+//        arrayPrint(count[0]);
                 
         for(int num = 1; num < 10; num++) // go through each number
         {
             if(count[0][num]==1)//if count equals 1 than that means only one number was available and that number goes into the cell
             {
                 puzzle[count[2][num]][count[1][num]] = num; //put number into cell 
-                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
+//                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
             }
         }
         
-        System.out.println("Checking square: 13");
+//        System.out.println("Checking square: 13");
         count = new int[3][10]; //count number of times each number has occured
         for(int Y = 6; Y < 9; Y++ )
         {
@@ -456,18 +555,18 @@ public class Sudoku2
                 }
             }
         }
-        arrayPrint(count[0]);
+//        arrayPrint(count[0]);
                 
         for(int num = 1; num < 10; num++) // go through each number
         {
             if(count[0][num]==1)//if count equals 1 than that means only one number was available and that number goes into the cell
             {
                 puzzle[count[2][num]][count[1][num]] = num; //put number into cell 
-                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
+//                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
             }
         }
         
-        System.out.println("Checking square: 21");
+//        System.out.println("Checking square: 21");
         count = new int[3][10]; //count number of times each number has occured
         for(int Y = 0; Y < 3; Y++ )
         {
@@ -484,18 +583,18 @@ public class Sudoku2
                 }
             }
         }
-        arrayPrint(count[0]);
+//        arrayPrint(count[0]);
                 
         for(int num = 1; num < 10; num++) // go through each number
         {
             if(count[0][num]==1)//if count equals 1 than that means only one number was available and that number goes into the cell
             {
                 puzzle[count[2][num]][count[1][num]] = num; //put number into cell 
-                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
+//                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
             }
         }
         
-        System.out.println("Checking square: 22");
+//        System.out.println("Checking square: 22");
         count = new int[3][10]; //count number of times each number has occured
         for(int Y = 3; Y < 6; Y++ )
         {
@@ -512,18 +611,18 @@ public class Sudoku2
                 }
             }
         }
-        arrayPrint(count[0]);
+//        arrayPrint(count[0]);
                 
         for(int num = 1; num < 10; num++) // go through each number
         {
             if(count[0][num]==1)//if count equals 1 than that means only one number was available and that number goes into the cell
             {
                 puzzle[count[2][num]][count[1][num]] = num; //put number into cell 
-                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
+//                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
             }
         }
     
-        System.out.println("Checking square: 23");
+//        System.out.println("Checking square: 23");
         count = new int[3][10]; //count number of times each number has occured
         for(int Y = 6; Y < 9; Y++ )
         {
@@ -540,18 +639,18 @@ public class Sudoku2
                 }
             }
         }
-        arrayPrint(count[0]);
+//        arrayPrint(count[0]);
                 
         for(int num = 1; num < 10; num++) // go through each number
         {
             if(count[0][num]==1)//if count equals 1 than that means only one number was available and that number goes into the cell
             {
                 puzzle[count[2][num]][count[1][num]] = num; //put number into cell 
-                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
+//                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
             }
         }
 
-        System.out.println("Checking square: 31");
+//        System.out.println("Checking square: 31");
         count = new int[3][10]; //count number of times each number has occured
         for(int Y = 0; Y < 3; Y++ )
         {
@@ -568,18 +667,18 @@ public class Sudoku2
                 }
             }
         }
-        arrayPrint(count[0]);
+//        arrayPrint(count[0]);
                 
         for(int num = 1; num < 10; num++) // go through each number
         {
             if(count[0][num]==1)//if count equals 1 than that means only one number was available and that number goes into the cell
             {
                 puzzle[count[2][num]][count[1][num]] = num; //put number into cell 
-                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
+//                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
             }
         }
 
-        System.out.println("Checking square: 32");
+//        System.out.println("Checking square: 32");
         count = new int[3][10]; //count number of times each number has occured
         for(int Y = 3; Y < 6; Y++ )
         {
@@ -596,18 +695,18 @@ public class Sudoku2
                 }
             }
         }
-        arrayPrint(count[0]);
+//        arrayPrint(count[0]);
                 
         for(int num = 1; num < 10; num++) // go through each number
         {
             if(count[0][num]==1)//if count equals 1 than that means only one number was available and that number goes into the cell
             {
                 puzzle[count[2][num]][count[1][num]] = num; //put number into cell 
-                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
+//                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
             }
         }
         
-        System.out.println("Checking square: 33");
+//        System.out.println("Checking square: 33");
         count = new int[3][10]; //count number of times each number has occured
         for(int Y = 6; Y < 9; Y++ )
         {
@@ -624,36 +723,151 @@ public class Sudoku2
                 }
             }
         }
-        arrayPrint(count[0]);
+//        arrayPrint(count[0]);
                 
         for(int num = 1; num < 10; num++) // go through each number
         {
             if(count[0][num]==1)//if count equals 1 than that means only one number was available and that number goes into the cell
             {
                 puzzle[count[2][num]][count[1][num]] = num; //put number into cell 
-                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
+//                System.out.println("X: " + count[1][num] + " Y: " + count[2][num] + " Cell: " + num);
             }
         }
         
         return puzzle;
     }
     
+    public static int[][] Guesser(int[][] puzzle, int[][][] marks)
+    {
+        /*
+        Find a cell with 2 marks. 0 is a low guess and 1 is a high guess
+        take a guess than solve
+        if solved return solution. if error try new guess sequence. 
+        else find another cell with 2 marks and guess again.
+        repeat till solved
+        
+        */
+        int guess = 0;
+        int guessLimit = 81;
+        for(int i = 0; i < guessLimit; i++)
+        {
+            //guess sequence 
+            System.out.println("Guess sequence: " + (guess)%2 + " " + (guess/2)%2 + " " + (guess/4)%2 + " " + (guess/8)%2 + " " + (guess/16)%2 + " " + (guess/32)%2);
+            
+            //copy puzzle to work on and not ruin the original work
+            int[][] work_puzzle = copyMatrix(puzzle);
+            int[][][] work_marks = copy3DMatrix(marks);
+            
+            matrixPrint3D(work_marks); //says which cell can take what number 
+            matrixPrint(work_puzzle);         //print solved sudoku puzzle 
+            
+            //guess low high
+            int guessLow = 0;
+            int guessHigh = 0;
+            
+            for(int n = 0; n < 20; n++)
+            {
+                //guess location
+                int guessX = -1;
+                int guessY = -1;
+                
+                //Find cell with 2 markers
+                for(int a = 0; a < 9; a++ )
+                {
+                    for(int b = 0; b < 9; b++ )
+                    {
+                        int count = 0;
+                        for(int c = 1; c < 10; c++ )
+                        {
+                            if(work_marks[a][b][c] > 0) 
+                            { 
+                                count++; 
+                                if(count == 1) {guessLow = work_marks[a][b][c]*c; }
+                                if(count == 2) {guessHigh = work_marks[a][b][c]*c; }
+                            }
+                        }
+                        
+                        if(count == 2) 
+                        {
+                            guessX = b;
+                            guessY = a;
+                            //skip out of both for loops
+                            b = 9;
+                            a = 9;
+                        }
+                    }
+                    //if no marker was found try different sequence by exiting for loop
+                    //n = 81;
+                }
+                System.out.println("guess: " + guessX + " " + guessY + " " + guessLow + " " + guessHigh);
+                
+                //guess low if true
+                if( (guess/Math.pow(2, n))%2 == 0 && guessX != -1)
+                {
+                    work_puzzle[guessY][guessX] = guessLow;
+                }
+                
+                //guess high 
+                else if(guessX != -1)
+                {
+                    work_puzzle[guessY][guessX] = guessHigh;
+                }
+                
+                matrixPrint(work_puzzle);         //print solved sudoku puzzle
+                
+                //solve
+                for(int j = 0; j < 81; j++) // run through many times and solve as much as you can
+                {
+                    marker(work_puzzle,work_marks); //marks each cell with 1,2,3,4,5,6,7,8,9 and crosses out the ones that dont belong 
+                    work_puzzle = SudokuSolver(work_puzzle,work_marks);        //solve sudoku puzzle
+                }
+                matrixPrint3D(work_marks); //says which cell can take what number 
+                matrixPrint(work_puzzle);         //print solved sudoku puzzle
+                
+                //check if solved
+                if( matrixCheck(work_puzzle) && SudokuCheck(work_puzzle) ) 
+                {
+                    System.out.println("finished");
+                    return work_puzzle; 
+                }
+                
+            }
+            
+            //increment guess
+            guess++;
+        }
+        
+        return puzzle;
+    }
+        
     public static void main(String[] args)
     {
         // Create matrix of sudoku puzzle to solve
         // zeros are the empty cells of sudoku puzzle
         int[][] A;                                    
         A = new int[9][9];  //example sudoku puzzle
-        A[0][0]= 0; A[0][1]= 4; A[0][2]= 0; A[0][3]= 0; A[0][4]= 0; A[0][5]= 6; A[0][6]= 0; A[0][7]= 0; A[0][8]= 0;
-        A[1][0]= 0; A[1][1]= 0; A[1][2]= 0; A[1][3]= 0; A[1][4]= 4; A[1][5]= 0; A[1][6]= 0; A[1][7]= 6; A[1][8]= 9;
-        A[2][0]= 0; A[2][1]= 0; A[2][2]= 9; A[2][3]= 1; A[2][4]= 0; A[2][5]= 5; A[2][6]= 0; A[2][7]= 0; A[2][8]= 0;
-        A[3][0]= 0; A[3][1]= 0; A[3][2]= 0; A[3][3]= 0; A[3][4]= 0; A[3][5]= 0; A[3][6]= 6; A[3][7]= 0; A[3][8]= 3;
-        A[4][0]= 2; A[4][1]= 0; A[4][2]= 4; A[4][3]= 0; A[4][4]= 6; A[4][5]= 0; A[4][6]= 5; A[4][7]= 0; A[4][8]= 7;
-        A[5][0]= 9; A[5][1]= 0; A[5][2]= 8; A[5][3]= 0; A[5][4]= 0; A[5][5]= 0; A[5][6]= 0; A[5][7]= 0; A[5][8]= 0;
-        A[6][0]= 0; A[6][1]= 0; A[6][2]= 0; A[6][3]= 6; A[6][4]= 0; A[6][5]= 9; A[6][6]= 2; A[6][7]= 0; A[6][8]= 0;
-        A[7][0]= 5; A[7][1]= 1; A[7][2]= 0; A[7][3]= 0; A[7][4]= 2; A[7][5]= 0; A[7][6]= 0; A[7][7]= 0; A[7][8]= 0;
-        A[8][0]= 0; A[8][1]= 0; A[8][2]= 0; A[8][3]= 7; A[8][4]= 0; A[8][5]= 0; A[8][6]= 0; A[8][7]= 4; A[8][8]= 0;
-        
+        A[0][0]= 0; A[0][1]= 2; A[0][2]= 7; A[0][3]= 0; A[0][4]= 0; A[0][5]= 0; A[0][6]= 5; A[0][7]= 0; A[0][8]= 0;
+        A[1][0]= 0; A[1][1]= 8; A[1][2]= 0; A[1][3]= 0; A[1][4]= 0; A[1][5]= 0; A[1][6]= 0; A[1][7]= 6; A[1][8]= 0;
+        A[2][0]= 0; A[2][1]= 0; A[2][2]= 0; A[2][3]= 5; A[2][4]= 0; A[2][5]= 0; A[2][6]= 0; A[2][7]= 0; A[2][8]= 0;
+        A[3][0]= 0; A[3][1]= 0; A[3][2]= 0; A[3][3]= 0; A[3][4]= 0; A[3][5]= 9; A[3][6]= 0; A[3][7]= 0; A[3][8]= 0;
+        A[4][0]= 0; A[4][1]= 0; A[4][2]= 0; A[4][3]= 3; A[4][4]= 0; A[4][5]= 0; A[4][6]= 0; A[4][7]= 1; A[4][8]= 0;
+        A[5][0]= 0; A[5][1]= 0; A[5][2]= 3; A[5][3]= 0; A[5][4]= 0; A[5][5]= 0; A[5][6]= 0; A[5][7]= 0; A[5][8]= 5;
+        A[6][0]= 0; A[6][1]= 0; A[6][2]= 0; A[6][3]= 0; A[6][4]= 0; A[6][5]= 0; A[6][6]= 0; A[6][7]= 8; A[6][8]= 6;
+        A[7][0]= 0; A[7][1]= 0; A[7][2]= 0; A[7][3]= 2; A[7][4]= 0; A[7][5]= 0; A[7][6]= 0; A[7][7]= 0; A[7][8]= 0;
+        A[8][0]= 9; A[8][1]= 0; A[8][2]= 2; A[8][3]= 0; A[8][4]= 5; A[8][5]= 0; A[8][6]= 4; A[8][7]= 0; A[8][8]= 3;
+                                           
+        //worlds hardest
+//        A[0][0]= 8; A[0][1]= 0; A[0][2]= 0; A[0][3]= 0; A[0][4]= 0; A[0][5]= 0; A[0][6]= 0; A[0][7]= 0; A[0][8]= 0;
+//        A[1][0]= 0; A[1][1]= 0; A[1][2]= 3; A[1][3]= 6; A[1][4]= 0; A[1][5]= 0; A[1][6]= 0; A[1][7]= 0; A[1][8]= 0;
+//        A[2][0]= 0; A[2][1]= 7; A[2][2]= 5; A[2][3]= 0; A[2][4]= 9; A[2][5]= 0; A[2][6]= 2; A[2][7]= 0; A[2][8]= 0;
+//        A[3][0]= 0; A[3][1]= 5; A[3][2]= 0; A[3][3]= 0; A[3][4]= 0; A[3][5]= 7; A[3][6]= 0; A[3][7]= 0; A[3][8]= 0;
+//        A[4][0]= 0; A[4][1]= 0; A[4][2]= 0; A[4][3]= 0; A[4][4]= 4; A[4][5]= 5; A[4][6]= 7; A[4][7]= 0; A[4][8]= 0;
+//        A[5][0]= 0; A[5][1]= 0; A[5][2]= 0; A[5][3]= 1; A[5][4]= 0; A[5][5]= 0; A[5][6]= 0; A[5][7]= 3; A[5][8]= 0;
+//        A[6][0]= 0; A[6][1]= 0; A[6][2]= 1; A[6][3]= 0; A[6][4]= 0; A[6][5]= 0; A[6][6]= 0; A[6][7]= 6; A[6][8]= 8;
+//        A[7][0]= 0; A[7][1]= 0; A[7][2]= 8; A[7][3]= 5; A[7][4]= 0; A[7][5]= 0; A[7][6]= 0; A[7][7]= 1; A[7][8]= 0;
+//        A[8][0]= 0; A[8][1]= 9; A[8][2]= 0; A[8][3]= 0; A[8][4]= 0; A[8][5]= 0; A[8][6]= 4; A[8][7]= 0; A[8][8]= 0;
+//        
+       
         int[][][] mark = new int[9][9][10]; //saves marks
         int[][] puzzle = new int[9][9]; //saves progress important when guessing is involved
         puzzle = copyMatrix(A);
@@ -674,7 +888,9 @@ public class Sudoku2
             
             matrixPrint3D(mark); //says which cell can take what number 
             matrixPrint(puzzle);         //print solved sudoku puzzle
+            Guesser(puzzle,mark);
         }              
         
     }
 }
+
